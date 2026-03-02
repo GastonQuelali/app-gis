@@ -1,98 +1,61 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
-
-export default function HomeScreen() {
+export default function DashboardScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Sistema de Catastro</Text>
+        <Text style={styles.subtitle}>Cochabamba - Bolivia</Text>
+      </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      <View style={styles.cardContainer}>
+        <View style={styles.card}>
+          <Text style={styles.cardValue}>1,245</Text>
+          <Text style={styles.cardLabel}>Predios Revisados</Text>
+        </View>
+        <View style={[styles.card, { backgroundColor: "#34C759" }]}>
+          <Text style={styles.cardValue}>85%</Text>
+          <Text style={styles.cardLabel}>Precisión GIS</Text>
+        </View>
+      </View>
+
+      <View style={styles.infoBox}>
+        <Text style={styles.infoTitle}>Comparativa de Motores</Text>
+        <Text style={styles.infoText}>
+          Usa las pestañas inferiores para comparar la carga de capas entre el
+          SDK oficial de ArcGIS y la solución libre Leaflet.
+        </Text>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: { flex: 1, backgroundColor: "#f0f2f5" },
+  header: { padding: 30, backgroundColor: "#007AFF", alignItems: "center" },
+  title: { fontSize: 24, fontWeight: "bold", color: "#fff" },
+  subtitle: { fontSize: 16, color: "#e0e0e0" },
+  cardContainer: {
+    flexDirection: "row",
+    padding: 20,
+    justifyContent: "space-between",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  card: {
+    backgroundColor: "#5856D6",
+    padding: 20,
+    borderRadius: 15,
+    width: "48%",
+    elevation: 3,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  cardValue: { fontSize: 22, fontWeight: "bold", color: "#fff" },
+  cardLabel: { fontSize: 12, color: "#fff", opacity: 0.9 },
+  infoBox: {
+    margin: 20,
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
   },
+  infoTitle: { fontWeight: "bold", marginBottom: 10 },
+  infoText: { color: "#666", lineHeight: 20 },
 });
