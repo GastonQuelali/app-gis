@@ -1,5 +1,5 @@
-import React from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
 import { WebView } from "react-native-webview";
 import { MAP_CONFIG } from "../constants/config";
 
@@ -7,69 +7,99 @@ interface LeafletMapProps {
   latitude: number;
   longitude: number;
   zoom: number;
+  visibleLayers?: string[];
 }
 
 const LeafletMap: React.FC<LeafletMapProps> = ({
   latitude,
   longitude,
   zoom,
+  visibleLayers = [],
 }) => {
+  const webViewRef = useRef<WebView>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (visibleLayers.length > 0 && webViewRef.current) {
+      const script = `
+        window.updateLayers(${JSON.stringify(visibleLayers)});
+        true;
+      `;
+      webViewRef.current.injectJavaScript(script);
+    }
+  }, [visibleLayers]);
+
   const leafletHTML = `
     <!DOCTYPE html>
     <html>
       <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        
-        <script src="https://unpkg.com/esri-leaflet@3.0.12/dist/esri-leaflet.js"></script>
-        
         <style>
-          body { margin: 0; padding: 0; }
-          #map { position: absolute; top: 0; bottom: 0; width: 100%; background: #f0f0f0; }
+          html, body, #map { padding: 0; margin: 0; height: 100%; width: 100%; }
+          .leaflet-control-layers { max-height: 200px; overflow-y: auto; }
         </style>
       </head>
       <body>
         <div id="map"></div>
         <script>
-          // Inicializar mapa
           const map = L.map('map').setView([${latitude}, ${longitude}], ${zoom});
 
-          // 1. Imagen Satelital 2022 (Es un Tiled Map Service)
-          L.esri.tiledMapLayer({
-            url: "${MAP_CONFIG.SERVICES.IMAGEN_2022}",
-            maxZoom: 19
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
           }).addTo(map);
 
-          // 2. Límites (Dynamic)
-          L.esri.dynamicMapLayer({
-            url: "${MAP_CONFIG.SERVICES.LIMITES}",
-            opacity: 1
-          }).addTo(map);
+          const layers = {};
 
-          // 3. Uso de Suelo (Dynamic con Opacidad)
-          L.esri.dynamicMapLayer({
-            url: "${MAP_CONFIG.SERVICES.USO_SUELO}",
-            opacity: 0.5
-          }).addTo(map);
+          const configLayers = [
+            { id: 'LIMITES', url: "${MAP_CONFIG.SERVICES.LIMITES}", name: "Límites Municipales" },
+            { id: 'USO_SUELO', url: "${MAP_CONFIG.SERVICES.USO_SUELO}", name: "Uso de Suelo" },
+            { id: 'MANZANAS', url: "${MAP_CONFIG.SERVICES.MANZANAS}", name: "Manzana" },
+            { id: 'VIAS', url: "${MAP_CONFIG.SERVICES.VIAS}", name: "Vías y Ejes" },
+            { id: 'PREDIOS', url: "${MAP_CONFIG.SERVICES.PREDIOS}", name: "Predios Catastrales" }
+          ];
 
-          // 4. Manzanas (Dynamic)
-          L.esri.dynamicMapLayer({
-            url: "${MAP_CONFIG.SERVICES.MANZANAS}"
-          }).addTo(map);
+          configLayers.forEach(l => {
+            if (l.url) {
+              layers[l.id] = L.tileLayer(l.url + '/tile/{z}/{y}/{x}', {
+                layers: l.id,
+                transparent: true,
+                format: 'image/png',
+                opacity: 0.7
+              });
+              map.addLayer(layers[l.id]);
+              layers[l.id].bringToBack();
+            }
+          });
 
-          // 5. Vías (Dynamic)
-          L.esri.dynamicMapLayer({
-            url: "${MAP_CONFIG.SERVICES.VIAS}"
-          }).addTo(map);
+          window.updateLayers = (visibleIds) => {
+            Object.keys(layers).forEach(id => {
+              if (layers[id]) {
+                if (visibleIds.includes(id)) {
+                  if (!map.hasLayer(layers[id])) {
+                    map.addLayer(layers[id]);
+                  }
+                } else {
+                  if (map.hasLayer(layers[id])) {
+                    map.removeLayer(layers[id]);
+                  }
+                }
+              }
+            });
+          };
 
-          // 6. Predios (Dynamic - La más pesada al final)
-          L.esri.dynamicMapLayer({
-            url: "${MAP_CONFIG.SERVICES.PREDIOS}"
-          }).addTo(map);
+          window.addEventListener('message', function(e) {
+            try {
+              const data = JSON.parse(e.data);
+              if (data.type === 'updateLayers' && data.layers) {
+                window.updateLayers(data.layers);
+              }
+            } catch(err) {}
+          });
 
+          window.updateLayers(${JSON.stringify(visibleLayers.length > 0 ? visibleLayers : ['LIMITES'])});
         </script>
       </body>
     </html>
@@ -78,20 +108,25 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
   return (
     <View style={styles.container}>
       <WebView
+        ref={webViewRef}
         originWhitelist={["*"]}
         source={{ html: leafletHTML }}
         style={{ flex: 1 }}
         javaScriptEnabled={true}
         domStorageEnabled={true}
-        startInLoadingState={true}
-        renderLoading={() => (
-          <ActivityIndicator
-            size="large"
-            color="#007AFF"
-            style={StyleSheet.absoluteFill}
-          />
-        )}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
+        mixedContentMode="always"
+        allowsInlineMediaPlayback={true}
+        mediaPlaybackRequiresUserAction={false}
       />
+      {isLoading && (
+        <ActivityIndicator
+          size="large"
+          color="#007AFF"
+          style={StyleSheet.absoluteFill}
+        />
+      )}
     </View>
   );
 };

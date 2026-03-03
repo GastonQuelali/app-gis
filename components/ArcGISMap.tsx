@@ -1,15 +1,35 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
-import { MAP_CONFIG } from "../constants/config"; // Importamos para tener las URLs
+import { MAP_CONFIG } from "../constants/config";
 
 interface ArcGISMapProps {
   latitude: number;
   longitude: number;
   zoom: number;
+  visibleLayers?: string[];
 }
 
-const ArcGISMap: React.FC<ArcGISMapProps> = ({ latitude, longitude, zoom }) => {
+const ArcGISMap: React.FC<ArcGISMapProps> = ({
+  latitude,
+  longitude,
+  zoom,
+  visibleLayers = [],
+}) => {
+  const webViewRef = useRef<WebView>(null);
+
+  useEffect(() => {
+    if (webViewRef.current && visibleLayers.length > 0) {
+      const script = `
+        if (window.updateLayers) {
+          window.updateLayers(${JSON.stringify(visibleLayers)});
+        }
+        true;
+      `;
+      webViewRef.current.injectJavaScript(script);
+    }
+  }, [visibleLayers]);
+
   const arcgisHTML = `
     <!DOCTYPE html>
     <html>
@@ -19,7 +39,8 @@ const ArcGISMap: React.FC<ArcGISMapProps> = ({ latitude, longitude, zoom }) => {
         <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/light/main.css" />
         <script src="https://js.arcgis.com/4.28/"></script>
         <style>
-          html, body, #viewDiv { padding: 0; margin: 0; height: 100%; width: 100%; background-color: #f0f0f0; }
+          html, body, #viewDiv { padding: 0; margin: 0; height: 100%; width: 100%; }
+          .esri-ui-corner .esri-component { margin-bottom: 10px; }
         </style>
       </head>
       <body>
@@ -29,46 +50,81 @@ const ArcGISMap: React.FC<ArcGISMapProps> = ({ latitude, longitude, zoom }) => {
             "esri/Map", 
             "esri/views/MapView", 
             "esri/layers/MapImageLayer",
-            "esri/layers/TileLayer"
-          ], (Map, MapView, MapImageLayer, TileLayer) => {
-            
-            // 1. Crear el mapa base (híbrido para tener satélite + etiquetas)
+            "esri/widgets/LayerList",
+            "esri/widgets/Expand",
+            "esri/widgets/Search",
+            "esri/widgets/Home"
+          ], (Map, MapView, MapImageLayer, LayerList, Expand, Search, Home) => {
+
             const map = new Map({ basemap: "hybrid" });
+            const layers = {};
 
-            // 2. Cargar Imagen Satelital propia (2022) como fondo si es Tiled
-            const img22 = new TileLayer({ 
-              url: "${MAP_CONFIG.SERVICES.IMAGEN_2022}",
-              opacity: 1
-            });
-            map.add(img22);
-
-            // 3. Cargar capas dinámicas de Catastro
-            const capasDinamicas = [
-              { url: "${MAP_CONFIG.SERVICES.LIMITES}", title: "Límites" },
-              { url: "${MAP_CONFIG.SERVICES.USO_SUELO}", title: "Uso de Suelo", opacity: 0.5 },
-              { url: "${MAP_CONFIG.SERVICES.MANZANAS}", title: "Manzanas" },
-              { url: "${MAP_CONFIG.SERVICES.VIAS}", title: "Vías" },
-              { url: "${MAP_CONFIG.SERVICES.PREDIOS}", title: "Predios" }
+            const capas = [
+              { title: "Límites Municipales", id: "LIMITES", url: "${MAP_CONFIG.SERVICES.LIMITES}" },
+              { title: "Uso de Suelo", id: "USO_SUELO", url: "${MAP_CONFIG.SERVICES.USO_SUELO}" },
+              { title: "Manzana", id: "MANZANAS", url: "${MAP_CONFIG.SERVICES.MANZANAS}" },
+              { title: "Vías y Ejes", id: "VIAS", url: "${MAP_CONFIG.SERVICES.VIAS}" },
+              { title: "Predios Catastrales", id: "PREDIOS", url: "${MAP_CONFIG.SERVICES.PREDIOS}" }
             ];
 
-            capasDinamicas.forEach(config => {
-              if (config.url) {
-                const layer = new MapImageLayer({ 
-                  url: config.url,
-                  opacity: config.opacity || 1
+            capas.forEach(c => {
+              if(c.url) {
+                const ly = new MapImageLayer({ 
+                  url: c.url, 
+                  title: c.title,
+                  id: c.id,
+                  visible: c.id === "LIMITES"
                 });
-                map.add(layer);
+                layers[c.id] = ly;
+                map.add(ly);
               }
             });
 
-            // 4. Inicializar la vista
             const view = new MapView({
               container: "viewDiv",
               map: map,
               center: [${longitude}, ${latitude}],
-              zoom: ${zoom},
-              ui: { components: ["attribution", "zoom"] }
+              zoom: ${zoom}
             });
+
+            view.when(() => {
+              window.updateLayers = (visibleIds) => {
+                Object.keys(layers).forEach(id => {
+                  if (layers[id]) {
+                    layers[id].visible = visibleIds.includes(id);
+                  }
+                });
+              };
+
+              window.updateLayers(${JSON.stringify(visibleLayers.length > 0 ? visibleLayers : ['LIMITES'])});
+            });
+
+            const searchWidget = new Search({ view: view });
+            const searchExpand = new Expand({
+              view: view,
+              content: searchWidget,
+              expanded: false,
+              group: "top-right"
+            });
+            view.ui.add(searchExpand, "top-right");
+
+            const layerList = new LayerList({ 
+              view: view,
+              selectionEnabled: true,
+              container: document.createElement("div")
+            });
+            
+            const layerExpand = new Expand({
+              view: view,
+              content: layerList,
+              expandIcon: "layers",
+              group: "top-right"
+            });
+            view.ui.add(layerExpand, "top-right");
+
+            const homeBtn = new Home({ view: view });
+            view.ui.add(homeBtn, "top-left");
+
           });
         </script>
       </body>
@@ -78,12 +134,14 @@ const ArcGISMap: React.FC<ArcGISMapProps> = ({ latitude, longitude, zoom }) => {
   return (
     <View style={styles.container}>
       <WebView
+        ref={webViewRef}
         originWhitelist={["*"]}
         source={{ html: arcgisHTML }}
         style={{ flex: 1 }}
-        startInLoadingState={true}
         javaScriptEnabled={true}
         domStorageEnabled={true}
+        mixedContentMode="always"
+        startInLoadingState={true}
         renderLoading={() => (
           <ActivityIndicator
             size="large"
