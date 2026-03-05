@@ -1,7 +1,29 @@
-import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+
+const PREDIOS_URL = "http://192.168.105.219:6080/arcgis/rest/services/catastro/predios_cba/FeatureServer/0/query?where=1=1&returnCountOnly=true&f=json";
 
 export default function DashboardScreen() {
+  const [prediosCount, setPrediosCount] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(PREDIOS_URL)
+      .then(res => res.json())
+      .then(data => {
+        setPrediosCount(data.count || 0);
+        setLoading(false);
+      })
+      .catch(() => {
+        setPrediosCount(0);
+        setLoading(false);
+      });
+  }, []);
+
+  const formatNumber = (num: number) => {
+    return num.toLocaleString("es-BO");
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -11,8 +33,14 @@ export default function DashboardScreen() {
 
       <View style={styles.cardContainer}>
         <View style={styles.card}>
-          <Text style={styles.cardValue}>1,245</Text>
-          <Text style={styles.cardLabel}>Predios Revisados</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <>
+              <Text style={styles.cardValue}>{prediosCount !== null ? formatNumber(prediosCount) : "—"}</Text>
+              <Text style={styles.cardLabel}>Total Predios</Text>
+            </>
+          )}
         </View>
         <View style={[styles.card, { backgroundColor: "#34C759" }]}>
           <Text style={styles.cardValue}>85%</Text>
@@ -21,10 +49,9 @@ export default function DashboardScreen() {
       </View>
 
       <View style={styles.infoBox}>
-        <Text style={styles.infoTitle}>Comparativa de Motores</Text>
+        <Text style={styles.infoTitle}>Mapa Interactivo</Text>
         <Text style={styles.infoText}>
-          Usa las pestañas inferiores para comparar la carga de capas entre el
-          SDK oficial de ArcGIS y la solución libre Leaflet.
+          Explora el mapa de Cochabamba con imágenes satelitales históricas desde 1964 hasta 2023.
         </Text>
       </View>
     </ScrollView>
@@ -47,9 +74,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     width: "48%",
     elevation: 3,
+    alignItems: "center",
+    minHeight: 90,
+    justifyContent: "center",
   },
   cardValue: { fontSize: 22, fontWeight: "bold", color: "#fff" },
-  cardLabel: { fontSize: 12, color: "#fff", opacity: 0.9 },
+  cardLabel: { fontSize: 12, color: "#fff", opacity: 0.9, marginTop: 4 },
   infoBox: {
     margin: 20,
     padding: 20,
