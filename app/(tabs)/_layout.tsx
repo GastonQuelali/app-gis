@@ -23,15 +23,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="leaflet"
-        options={{
-          title: "Leaflet",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="earth" size={26} color={color} />
-          ),
-        }}
-      />
     </Tabs>
   );
 }

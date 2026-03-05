@@ -6,6 +6,14 @@ export const MAP_CONFIG = {
     longitude: -66.1568,
     zoom: 15,
   },
+  BASE_MAPS: [
+    { id: 'baseMap2019', name: '2019', url: 'http://192.168.105.219:6080/arcgis/rest/services/baseMap2019/MapServer' },
+    { id: 'baseMap2018', name: '2018', url: 'http://192.168.105.219:6080/arcgis/rest/services/baseMap2018/MapServer' },
+    { id: 'baseMap06102017', name: 'Oct 2017', url: 'http://192.168.105.219:6080/arcgis/rest/services/baseMap06102017/MapServer' },
+    { id: 'baseMap2017', name: '2017', url: 'http://192.168.105.219:6080/arcgis/rest/services/baseMap2017/MapServer' },
+    { id: 'baseMap2015', name: '2015', url: 'http://192.168.105.219:6080/arcgis/rest/services/baseMap2015/MapServer' },
+    { id: 'baseMap2007', name: '2007', url: 'http://192.168.105.219:6080/arcgis/rest/services/baseMap2007/MapServer' },
+  ],
   SERVICES: {
     PREDIOS:
       "http://192.168.105.219:6080/arcgis/rest/services/catastro/predios_cba/MapServer",
