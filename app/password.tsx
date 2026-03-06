@@ -43,17 +43,7 @@ export default function LoginPasswordScreen() {
       }
       
       // TODO: Integrar con tu backend para otros usuarios
-      // const response = await fetch(`${AUTH_CONFIG.API_URL}${AUTH_CONFIG.ENDPOINTS.LOGIN}`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ email, password }),
-      // });
-      
-      // Simulación de login exitoso
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Guardar sesión (ejemplo)
-      // await SecureStore.setItemAsync("userEmail", email);
       
       Alert.alert("Éxito", "Inicio de sesión exitoso", [
         { text: "OK", onPress: () => router.replace("/(tabs)") }
@@ -158,6 +148,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
+    fontFamily: "Poppins-Bold",
   },
   title: {
     fontSize: 24,
@@ -165,12 +156,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#333",
     marginBottom: 8,
+    fontFamily: "Poppins-Bold",
   },
   emailText: {
     fontSize: 16,
     textAlign: "center",
     color: "#666",
     marginBottom: 30,
+    fontFamily: "Poppins",
   },
   inputContainer: {
     marginBottom: 20,
@@ -180,6 +173,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
     marginBottom: 8,
+    fontFamily: "Poppins-SemiBold",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -192,6 +186,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: "#ddd",
+    fontFamily: "Poppins",
   },
   passwordInput: {
     flex: 1,
@@ -218,6 +213,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "Poppins-SemiBold",
   },
   backButton: {
     marginTop: 20,
@@ -226,5 +222,6 @@ const styles = StyleSheet.create({
   backButtonText: {
     color: "#007AFF",
     fontSize: 16,
+    fontFamily: "Poppins",
   },
 });

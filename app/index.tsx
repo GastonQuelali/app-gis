@@ -148,6 +148,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     color: "#fff",
+    fontFamily: "Poppins-Bold",
   },
   title: {
     fontSize: 24,
@@ -155,12 +156,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#333",
     marginBottom: 8,
+    fontFamily: "Poppins-Bold",
   },
   subtitle: {
     fontSize: 16,
     textAlign: "center",
     color: "#666",
     marginBottom: 40,
+    fontFamily: "Poppins",
   },
   inputContainer: {
     marginBottom: 20,
@@ -170,6 +173,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
     marginBottom: 8,
+    fontFamily: "Poppins-SemiBold",
   },
   input: {
     backgroundColor: "#fff",
@@ -178,6 +182,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: "#ddd",
+    fontFamily: "Poppins",
   },
   button: {
     backgroundColor: "#007AFF",
@@ -193,6 +198,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "Poppins-SemiBold",
   },
   biometricButton: {
     backgroundColor: "#34C759",
