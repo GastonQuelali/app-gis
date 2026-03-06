@@ -4,7 +4,7 @@ import React from "react";
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "#007AFF" }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: "#3B82F6" }}>
       <Tabs.Screen
         name="index"
         options={{
@@ -20,6 +20,15 @@ export default function TabLayout() {
           title: "ArcGIS",
           tabBarIcon: ({ color }) => (
             <Ionicons name="map" size={26} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Ajustes",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="settings" size={26} color={color} />
           ),
         }}
       />

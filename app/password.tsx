@@ -11,10 +11,12 @@ import {
   Platform,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function LoginPasswordScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { theme } = useTheme();
   const email = params.email as string;
   
   const [password, setPassword] = useState("");
@@ -32,7 +34,6 @@ export default function LoginPasswordScreen() {
     setLoading(true);
     
     try {
-      // Hardcoded: permitir login con correo específico (cualquier contraseña)
       if (email?.toLowerCase() === VALID_EMAIL.toLowerCase()) {
         await new Promise(resolve => setTimeout(resolve, 500));
         
@@ -42,7 +43,6 @@ export default function LoginPasswordScreen() {
         return;
       }
       
-      // TODO: Integrar con tu backend para otros usuarios
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       Alert.alert("Éxito", "Inicio de sesión exitoso", [
@@ -62,28 +62,43 @@ export default function LoginPasswordScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background.primary }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <View style={styles.logoPlaceholder}>
-            <Text style={styles.logoText}>GIS</Text>
+          <View style={[styles.logoPlaceholder, { backgroundColor: theme.accent.blue }]}>
+            <Text style={[styles.logoText, { fontFamily: "Poppins-Bold" }]}>GIS</Text>
           </View>
         </View>
 
-        <Text style={styles.title}>Bienvenido</Text>
-        <Text style={styles.emailText}>{email}</Text>
+        <Text style={[styles.title, { color: theme.text.primary, fontFamily: "Poppins-Bold" }]}>
+          Bienvenido
+        </Text>
+        <Text style={[styles.emailText, { color: theme.text.secondary, fontFamily: "Poppins" }]}>
+          {email}
+        </Text>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Contraseña</Text>
+          <Text style={[styles.label, { color: theme.text.primary, fontFamily: "Poppins-SemiBold" }]}>
+            Contraseña
+          </Text>
           <View style={styles.passwordContainer}>
             <TextInput
-              style={[styles.input, styles.passwordInput]}
+              style={[
+                styles.input,
+                styles.passwordInput,
+                { 
+                  backgroundColor: theme.background.tertiary, 
+                  borderColor: theme.border.default,
+                  color: theme.text.primary,
+                  fontFamily: "Poppins"
+                }
+              ]}
               value={password}
               onChangeText={setPassword}
               placeholder="Ingresa tu contraseña"
-              placeholderTextColor="#999"
+              placeholderTextColor={theme.text.muted}
               secureTextEntry={!showPassword}
               autoCapitalize="none"
             />
@@ -99,14 +114,20 @@ export default function LoginPasswordScreen() {
         </View>
 
         <TouchableOpacity
-          style={[styles.button, loading && styles.buttonDisabled]}
+          style={[
+            styles.button,
+            loading && styles.buttonDisabled,
+            { backgroundColor: theme.accent.blue }
+          ]}
           onPress={handleLogin}
           disabled={loading || !password.trim()}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+            <Text style={[styles.buttonText, { fontFamily: "Poppins-SemiBold" }]}>
+              Iniciar Sesión
+            </Text>
           )}
         </TouchableOpacity>
 
@@ -115,7 +136,9 @@ export default function LoginPasswordScreen() {
           onPress={handleBack}
           disabled={loading}
         >
-          <Text style={styles.backButtonText}>← Volver</Text>
+          <Text style={[styles.backButtonText, { color: theme.accent.blue, fontFamily: "Poppins" }]}>
+            ← Volver
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -125,7 +148,6 @@ export default function LoginPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f2f5",
   },
   content: {
     flex: 1,
@@ -140,7 +162,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#007AFF",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -148,22 +169,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
-    fontFamily: "Poppins-Bold",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    color: "#333",
     marginBottom: 8,
-    fontFamily: "Poppins-Bold",
   },
   emailText: {
     fontSize: 16,
     textAlign: "center",
-    color: "#666",
     marginBottom: 30,
-    fontFamily: "Poppins",
   },
   inputContainer: {
     marginBottom: 20,
@@ -171,22 +187,17 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 8,
-    fontFamily: "Poppins-SemiBold",
   },
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   input: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#ddd",
-    fontFamily: "Poppins",
   },
   passwordInput: {
     flex: 1,
@@ -200,28 +211,24 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   button: {
-    backgroundColor: "#007AFF",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
     marginTop: 12,
   },
   buttonDisabled: {
-    backgroundColor: "#ccc",
+    opacity: 0.5,
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: "Poppins-SemiBold",
   },
   backButton: {
     marginTop: 20,
     alignItems: "center",
   },
   backButtonText: {
-    color: "#007AFF",
     fontSize: 16,
-    fontFamily: "Poppins",
   },
 });

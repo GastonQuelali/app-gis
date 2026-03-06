@@ -12,9 +12,11 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import * as LocalAuthentication from "expo-local-authentication";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { theme } = useTheme();
   const [email, setEmail] = useState("");
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
@@ -64,27 +66,41 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background.primary }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <View style={styles.logoPlaceholder}>
-            <Text style={styles.logoText}>GIS</Text>
+          <View style={[styles.logoPlaceholder, { backgroundColor: theme.accent.blue }]}>
+            <Text style={[styles.logoText, { fontFamily: "Poppins-Bold" }]}>GIS</Text>
           </View>
         </View>
 
-        <Text style={styles.title}>Sistema de Catastro</Text>
-        <Text style={styles.subtitle}>Cochabamba - Bolivia</Text>
+        <Text style={[styles.title, { color: theme.text.primary, fontFamily: "Poppins-Bold" }]}>
+          Sistema de Catastro
+        </Text>
+        <Text style={[styles.subtitle, { color: theme.text.secondary, fontFamily: "Poppins" }]}>
+          Cochabamba - Bolivia
+        </Text>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email / Usuario</Text>
+          <Text style={[styles.label, { color: theme.text.primary, fontFamily: "Poppins-SemiBold" }]}>
+            Email / Usuario
+          </Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              { 
+                backgroundColor: theme.background.tertiary, 
+                borderColor: theme.border.default,
+                color: theme.text.primary,
+                fontFamily: "Poppins"
+              }
+            ]}
             value={email}
             onChangeText={setEmail}
             placeholder="Ingresa tu email"
-            placeholderTextColor="#999"
+            placeholderTextColor={theme.text.muted}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
@@ -96,6 +112,7 @@ export default function LoginScreen() {
             styles.button,
             styles.biometricButton,
             isAuthenticating && styles.buttonDisabled,
+            { backgroundColor: theme.accent.green }
           ]}
           onPress={handleBiometricAuth}
           disabled={isAuthenticating}
@@ -105,17 +122,25 @@ export default function LoginScreen() {
           ) : (
             <>
               <Text style={styles.biometricIcon}>👆</Text>
-              <Text style={styles.buttonText}>Usar Huella Digital</Text>
+              <Text style={[styles.buttonText, { fontFamily: "Poppins-SemiBold" }]}>
+                Usar Huella Digital
+              </Text>
             </>
           )}
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, !email.trim() && styles.buttonDisabled]}
+          style={[
+            styles.button, 
+            !email.trim() && styles.buttonDisabled,
+            { backgroundColor: theme.accent.blue }
+          ]}
           onPress={handleNext}
           disabled={!email.trim()}
         >
-          <Text style={styles.buttonText}>Siguiente</Text>
+          <Text style={[styles.buttonText, { fontFamily: "Poppins-SemiBold" }]}>
+            Siguiente
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -125,7 +150,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f2f5",
   },
   content: {
     flex: 1,
@@ -140,7 +164,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#007AFF",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -148,22 +171,17 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     color: "#fff",
-    fontFamily: "Poppins-Bold",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    color: "#333",
     marginBottom: 8,
-    fontFamily: "Poppins-Bold",
   },
   subtitle: {
     fontSize: 16,
     textAlign: "center",
-    color: "#666",
     marginBottom: 40,
-    fontFamily: "Poppins",
   },
   inputContainer: {
     marginBottom: 20,
@@ -171,37 +189,29 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 8,
-    fontFamily: "Poppins-SemiBold",
   },
   input: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#ddd",
-    fontFamily: "Poppins",
   },
   button: {
-    backgroundColor: "#007AFF",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
     marginTop: 12,
   },
   buttonDisabled: {
-    backgroundColor: "#ccc",
+    opacity: 0.5,
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: "Poppins-SemiBold",
   },
   biometricButton: {
-    backgroundColor: "#34C759",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
