@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
-
-const PREDIOS_URL = "http://192.168.105.219:6080/arcgis/rest/services/catastro/predios_cba/FeatureServer/0/query?where=1=1&returnCountOnly=true&f=json";
+import { getPrediosCountUrl } from "../../constants/arcgis";
 
 export default function DashboardScreen() {
   const [prediosCount, setPrediosCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(PREDIOS_URL)
+    fetch(getPrediosCountUrl())
       .then(res => res.json())
       .then(data => {
         setPrediosCount(data.count || 0);

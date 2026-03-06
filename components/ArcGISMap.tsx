@@ -1,7 +1,7 @@
 import React from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
-import { MAP_CONFIG } from "../constants/config";
+import { ARCGIS_CONFIG, getLayerUrl, getBaseMapUrl } from "../constants/arcgis";
 
 interface ArcGISMapProps {
   latitude: number;
@@ -29,6 +29,21 @@ const ArcGISMap: React.FC<ArcGISMapProps> = ({
       webViewRef.current.injectJavaScript(script);
     }
   }, [visibleLayers]);
+
+  const capasConfig = [
+    { title: "Límites Municipales", id: "LIMITES", url: getLayerUrl("LIMITES") },
+    { title: "Uso de Suelo", id: "USO_SUELO", url: getLayerUrl("USO_SUELO") },
+    { title: "Manzana", id: "MANZANAS", url: getLayerUrl("MANZANAS") },
+    { title: "Vías y Ejes", id: "VIAS", url: getLayerUrl("VIAS") },
+    { title: "Predios Catastrales", id: "PREDIOS", url: getLayerUrl("PREDIOS") }
+  ];
+
+  const baseMapsOrder = [2023, 2022, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008, 2007, 2004, 2000, 1994, 1964];
+
+  const baseMapsConfig = baseMapsOrder.map(year => ({
+    year,
+    url: getBaseMapUrl(year as keyof typeof ARCGIS_CONFIG.BASE_MAPS)
+  }));
 
   const arcgisHTML = `
     <!DOCTYPE html>
@@ -65,13 +80,7 @@ const ArcGISMap: React.FC<ArcGISMapProps> = ({
             const map = new Map();
             const layers = {};
 
-            const capas = [
-              { title: "Límites Municipales", id: "LIMITES", url: "${MAP_CONFIG.SERVICES.LIMITES}" },
-              { title: "Uso de Suelo", id: "USO_SUELO", url: "${MAP_CONFIG.SERVICES.USO_SUELO}" },
-              { title: "Manzana", id: "MANZANAS", url: "${MAP_CONFIG.SERVICES.MANZANAS}" },
-              { title: "Vías y Ejes", id: "VIAS", url: "${MAP_CONFIG.SERVICES.VIAS}" },
-              { title: "Predios Catastrales", id: "PREDIOS", url: "${MAP_CONFIG.SERVICES.PREDIOS}" }
-            ];
+            const capas = ${JSON.stringify(capasConfig)};
 
             capas.forEach(c => {
               if(c.url) {
@@ -120,28 +129,12 @@ const ArcGISMap: React.FC<ArcGISMapProps> = ({
               });
             }
 
-            // Galería de mapas base (imágenes históricas) - orden descendente
-            const baseMaps = [
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen_2023_500/MapServer', '2023', 'baseMap2023'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2022/MapServer', '2022', 'baseMap2022'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2019_500/MapServer', '2019', 'baseMap2019'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services//imagenes/CBA_2018500/MapServer', '2018', 'baseMap2018'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2017_500/MapServer', '2017', 'baseMap2017'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/CBBA_2016_500/MapServer', '2016', 'baseMap2016'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2015_500/MapServer', '2015', 'baseMap2015'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2014_500/MapServer', '2014', 'baseMap2014'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2013_500/MapServer', '2013', 'baseMap2013'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2012_500/MapServer', '2012', 'baseMap2012'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2011_500/MapServer', '2011', 'baseMap2011'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2010_500/MapServer', '2010', 'baseMap2010'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2009_500/MapServer', '2009', 'baseMap2009'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/CBBA_2008_500/MapServer', '2008', 'baseMap2008'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2007_500/MapServer', '2007', 'baseMap2007'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen_2004500/MapServer', '2004', 'baseMap2004'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen2000_500/MapServer', '2000', 'baseMap2000'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/CBA_1994_500/MapServer', '1994', 'baseMap1994'),
-              crearBasemap('http://192.168.105.219:6080/arcgis/rest/services/imagenes/imagen1964_500/MapServer', '1964', 'baseMap1964')
-            ];
+            // Galería de mapas base (imágenes históricas)
+            const baseMaps = ${JSON.stringify(baseMapsConfig.map(bm => ({
+              url: bm.url,
+              title: bm.year.toString(),
+              id: `baseMap${bm.year}`
+            })))}.map(bm => crearBasemap(bm.url, bm.title, bm.id));
 
             const basemapGallery = new BasemapGallery({
               view: view,
