@@ -10,7 +10,7 @@ export default function TabLayout() {
         options={{
           title: "Inicio",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="stats-chart" size={26} color={color} />
+            <Ionicons name="grid" color={color} size={26} />
           ),
         }}
       />
