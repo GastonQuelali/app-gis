@@ -44,3 +44,7 @@ export const getBaseMapUrl = (year: keyof typeof ARCGIS_CONFIG.BASE_MAPS): strin
 export const getPrediosCountUrl = (): string => {
   return `${ARCGIS_CONFIG.SERVER}/arcgis/rest/services/catastro/predios_cba/FeatureServer/0/query?where=1=1&returnCountOnly=true&f=json`;
 };
+
+export const getManzanasCountUrl = (): string => {
+  return `${ARCGIS_CONFIG.SERVER}/arcgis/rest/services/catastro/manzanasdb/MapServer/0/query?where=1=1&returnCountOnly=true&f=json`;
+};
