@@ -1,3 +1,4 @@
+import { useTheme } from "@/hooks/use-theme";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
@@ -13,6 +14,7 @@ import {
 } from "../../constants/arcgis";
 
 export default function DashboardScreen() {
+  const { theme } = useTheme();
   const [prediosCount, setPrediosCount] = useState<number | null>(null);
   const [manzanaCount, setManzanaCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -39,42 +41,72 @@ export default function DashboardScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Sistema de Catastro</Text>
-        <Text style={styles.subtitle}>Cochabamba - Bolivia</Text>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background.primary }]}
+    >
+      <View style={[styles.header, { backgroundColor: theme.accent.blue }]}>
+        <Text style={[styles.title, { fontFamily: "Poppins-Bold" }]}>
+          Sistema de Catastro
+        </Text>
+        <Text style={[styles.subtitle, { fontFamily: "Poppins" }]}>
+          Cochabamba - Bolivia
+        </Text>
       </View>
 
       <View style={styles.cardContainer}>
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: theme.accent.green }]}>
           {loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
             <>
-              <Text style={styles.cardValue}>
+              <Text style={[styles.cardValue, { fontFamily: "Poppins-Bold" }]}>
                 {prediosCount !== null ? formatNumber(prediosCount) : "—"}
               </Text>
-              <Text style={styles.cardLabel}>Total Predios</Text>
+              <Text style={[styles.cardLabel, { fontFamily: "Poppins" }]}>
+                Total Predios
+              </Text>
             </>
           )}
         </View>
-        <View style={[styles.card, { backgroundColor: "#5856D6" }]}>
+        <View style={[styles.card, { backgroundColor: theme.accent.blue }]}>
           {loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
             <>
-              <Text style={styles.cardValue}>
+              <Text style={[styles.cardValue, { fontFamily: "Poppins-Bold" }]}>
                 {manzanaCount !== null ? formatNumber(manzanaCount) : "—"}
               </Text>
-              <Text style={styles.cardLabel}>Total Manzana</Text>
+              <Text style={[styles.cardLabel, { fontFamily: "Poppins" }]}>
+                Total Manzana
+              </Text>
             </>
           )}
         </View>
       </View>
 
-      <View style={styles.infoBox}>
-        <Text style={styles.infoTitle}>Mapa Interactivo</Text>
-        <Text style={styles.infoText}>
+      <View
+        style={[
+          styles.infoBox,
+          {
+            backgroundColor: theme.background.secondary,
+            borderColor: theme.border.default,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.infoTitle,
+            { color: theme.text.primary, fontFamily: "Poppins-SemiBold" },
+          ]}
+        >
+          Mapa Interactivo
+        </Text>
+        <Text
+          style={[
+            styles.infoText,
+            { color: theme.text.secondary, fontFamily: "Poppins" },
+          ]}
+        >
           Explora el mapa de Cochabamba con imágenes satelitales históricas
           desde 1964 hasta 2023.
         </Text>
@@ -84,17 +116,16 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f0f2f5" },
-  header: { padding: 30, backgroundColor: "#007AFF", alignItems: "center" },
+  container: { flex: 1 },
+  header: { padding: 30, alignItems: "center" },
   title: { fontSize: 24, fontWeight: "bold", color: "#fff" },
-  subtitle: { fontSize: 16, color: "#e0e0e0" },
+  subtitle: { fontSize: 16, opacity: 0.9 },
   cardContainer: {
     flexDirection: "row",
     padding: 20,
     justifyContent: "space-between",
   },
   card: {
-    backgroundColor: "#34C759",
     padding: 20,
     borderRadius: 15,
     width: "48%",
@@ -108,9 +139,9 @@ const styles = StyleSheet.create({
   infoBox: {
     margin: 20,
     padding: 20,
-    backgroundColor: "#fff",
     borderRadius: 10,
+    borderWidth: 1,
   },
   infoTitle: { fontWeight: "bold", marginBottom: 10 },
-  infoText: { color: "#666", lineHeight: 20 },
+  infoText: { lineHeight: 20 },
 });
