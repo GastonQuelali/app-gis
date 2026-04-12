@@ -1,3 +1,11 @@
+export const MAP_CONFIG = {
+  INITIAL_REGION: {
+    latitude: -17.3895,
+    longitude: -66.1568,
+    zoom: 15,
+  },
+};
+
 export const ARCGIS_CONFIG = {
   SERVER: "http://192.168.105.219:6080",
   BASE_URL: "http://192.168.105.219:6080/arcgis/rest/services",
@@ -45,6 +53,9 @@ export const getPrediosCountUrl = (): string => {
   return `${ARCGIS_CONFIG.SERVER}/arcgis/rest/services/catastro/predios_cba/FeatureServer/0/query?where=1=1&returnCountOnly=true&f=json`;
 };
 
-export const getManzanasCountUrl = (): string => {
-  return `${ARCGIS_CONFIG.SERVER}/arcgis/rest/services/catastro/manzanasdb/MapServer/0/query?where=1=1&returnCountOnly=true&f=json`;
+export const getManzanaCountUrl = (): string => {
+  return `${ARCGIS_CONFIG.SERVER}/arcgis/rest/services/catastro/manzana/MapServer/0/query?where=1=1&returnCountOnly=true&f=json`;
 };
+
+export const getManzanaUrl = getManzanaCountUrl;
+export const getManzanaSCountUrl = getManzanaCountUrl;

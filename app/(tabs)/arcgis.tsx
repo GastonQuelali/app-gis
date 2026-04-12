@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import ArcGISMap from "../../components/ArcGISMap";
-import { MAP_CONFIG } from "../../constants/config";
+import { MAP_CONFIG } from "../../constants/arcgis";
 
 export default function ArcGISScreen() {
   return (

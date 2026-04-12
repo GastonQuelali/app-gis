@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import {
-  getManzanasCountUrl,
+  getManzanaUrl,
   getPrediosCountUrl,
 } from "../../constants/arcgis";
 
@@ -19,10 +19,10 @@ export default function DashboardScreen() {
   const [manzanaCount, setManzanaCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+useEffect(() => {
     Promise.all([
       axios.get(getPrediosCountUrl()),
-      axios.get(getManzanasCountUrl()),
+      axios.get(getManzanaUrl()),
     ])
       .then(([prediosRes, manzanaRes]) => {
         setPrediosCount(prediosRes.data.count || 0);
