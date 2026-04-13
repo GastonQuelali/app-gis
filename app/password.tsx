@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "@/hooks/use-theme";
+import { authService } from "@/services/auth";
 
 export default function LoginPasswordScreen() {
   const router = useRouter();
@@ -23,8 +24,6 @@ export default function LoginPasswordScreen() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const VALID_EMAIL = "gaston.quelali@gmail.com";
-
   const handleLogin = async () => {
     if (!password.trim()) {
       Alert.alert("Error", "Por favor ingresa tu contraseña");
@@ -34,16 +33,9 @@ export default function LoginPasswordScreen() {
     setLoading(true);
     
     try {
-      if (email?.toLowerCase() === VALID_EMAIL.toLowerCase()) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        Alert.alert("Éxito", "Inicio de sesión exitoso", [
-          { text: "OK", onPress: () => router.replace("/(tabs)") }
-        ]);
-        return;
-      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await authService.saveCredentials(email);
       
       Alert.alert("Éxito", "Inicio de sesión exitoso", [
         { text: "OK", onPress: () => router.replace("/(tabs)") }

@@ -1,6 +1,16 @@
+import { ARCGIS_BASE_URL, SERVER_BASE_URL } from "./server";
+
+export const MAP_CONFIG = {
+  INITIAL_REGION: {
+    latitude: -17.3895,
+    longitude: -66.1568,
+    zoom: 15,
+  },
+};
+
 export const ARCGIS_CONFIG = {
-  SERVER: "http://192.168.105.219:6080",
-  BASE_URL: "http://192.168.105.219:6080/arcgis/rest/services",
+  SERVER: SERVER_BASE_URL,
+  BASE_URL: ARCGIS_BASE_URL,
 
   LAYERS: {
     PREDIOS: "catastro/predios_cba/FeatureServer/0",
@@ -34,17 +44,20 @@ export const ARCGIS_CONFIG = {
 };
 
 export const getLayerUrl = (layerKey: keyof typeof ARCGIS_CONFIG.LAYERS): string => {
-  return `${ARCGIS_CONFIG.SERVER}/arcgis/rest/services/${ARCGIS_CONFIG.LAYERS[layerKey]}`;
+  return `${ARCGIS_BASE_URL}/${ARCGIS_CONFIG.LAYERS[layerKey]}`;
 };
 
 export const getBaseMapUrl = (year: keyof typeof ARCGIS_CONFIG.BASE_MAPS): string => {
-  return `${ARCGIS_CONFIG.SERVER}/arcgis/rest/services/${ARCGIS_CONFIG.BASE_MAPS[year]}`;
+  return `${ARCGIS_BASE_URL}/${ARCGIS_CONFIG.BASE_MAPS[year]}`;
 };
 
 export const getPrediosCountUrl = (): string => {
-  return `${ARCGIS_CONFIG.SERVER}/arcgis/rest/services/catastro/predios_cba/FeatureServer/0/query?where=1=1&returnCountOnly=true&f=json`;
+  return `${ARCGIS_BASE_URL}/catastro/predios_cba/FeatureServer/0/query?where=1=1&returnCountOnly=true&f=json`;
 };
 
-export const getManzanasCountUrl = (): string => {
-  return `${ARCGIS_CONFIG.SERVER}/arcgis/rest/services/catastro/manzanasdb/MapServer/0/query?where=1=1&returnCountOnly=true&f=json`;
+export const getManzanaCountUrl = (): string => {
+  return `${ARCGIS_BASE_URL}/catastro/manzana/MapServer/0/query?where=1=1&returnCountOnly=true&f=json`;
 };
+
+export const getManzanaUrl = getManzanaCountUrl;
+export const getManzanaSCountUrl = getManzanaCountUrl;
