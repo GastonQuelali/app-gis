@@ -1,5 +1,7 @@
+import { SERVER_CONFIG } from "./server";
+
 export const AUTH_CONFIG = {
-  API_URL: "http://192.168.105.219:6080",
+  API_URL: SERVER_CONFIG.BASE_URL,
   ENDPOINTS: {
     LOGIN: "/api/auth/login",
     VALIDATE_TOKEN: "/api/auth/validate",
