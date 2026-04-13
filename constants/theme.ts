@@ -58,4 +58,9 @@ export const lightTheme = {
   },
 };
 
+export const Colors = {
+  light: lightTheme,
+  dark: darkTheme,
+};
+
 export type Theme = typeof darkTheme;
