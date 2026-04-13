@@ -1,150 +1,73 @@
-import { Feather } from '@expo/vector-icons';
-import {
-  DrawerContentScrollView,
-  DrawerContentComponentProps,
-} from '@react-navigation/drawer';
-import { useTheme } from '@/hooks/use-theme';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { useTheme } from "@/hooks/use-theme";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
-interface DrawerItemProps {
-  label: string;
-  iconName: string;
-  isActive: boolean;
-  onPress: () => void;
-}
-
-function DrawerItem({ label, iconName, isActive, onPress }: DrawerItemProps) {
+export function CustomDrawerContent(props: any) {
   const { theme } = useTheme();
-
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.drawerItem,
-        {
-          backgroundColor: pressed
-            ? theme.background.tertiary
-            : isActive
-            ? theme.background.tertiary
-            : 'transparent',
-          borderLeftColor: isActive ? theme.accent.blue : 'transparent',
-        },
-      ]}
-    >
-      <Feather
-        name={iconName as any}
-        size={22}
-        color={isActive ? theme.accent.blue : theme.text.secondary}
-      />
-      <Text
-        style={[
-          styles.drawerItemLabel,
-          {
-            color: isActive ? theme.accent.blue : theme.text.secondary,
-            fontWeight: isActive ? '600' : '400',
-          },
-        ]}
-      >
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
-
-export function DrawerContent(props: DrawerContentComponentProps) {
-  const { theme } = useTheme();
-  const currentRoute = props.state.routeNames[props.state.index];
-
+  const router = useRouter();
+  
   const menuItems = [
-    { name: 'Inicio', label: 'Inicio', icon: 'home', route: 'index' },
-    { name: 'arcgis', label: 'Mapa Base', icon: 'map', route: 'arcgis' },
-    { name: 'settings', label: 'Ajustes', icon: 'settings', route: 'settings' },
-    { name: 'password', label: 'Iniciar Sesión', icon: 'log-in', route: 'password' },
+    { name: "index", label: "Inicio", icon: "home-outline", route: "/(tabs)" },
+    { name: "arcgis", label: "Mapa Base", icon: "map-outline", route: "/(tabs)/arcgis" },
+    { name: "settings", label: "Ajustes", icon: "settings-outline", route: "/(tabs)/settings" },
   ];
 
-  const handleNavigation = (routeName: string) => {
-    props.navigation.navigate(routeName);
-  };
-
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
-      <View style={[styles.drawerHeader, { backgroundColor: theme.background.secondary }]}>
-        <View style={[styles.logoContainer, { backgroundColor: theme.accent.blue }]}>
-          <Text style={styles.logoText}>GIS</Text>
-        </View>
-        <Text style={[styles.appName, { color: theme.text.primary }]}>App GIS</Text>
+    <View style={[styles.drawerContent, { backgroundColor: theme.background.secondary }]}>
+      <View style={[styles.header, { paddingTop: 50 }]}>
+        <Text style={[styles.appTitle, { color: theme.text.primary }]}>App GIS</Text>
       </View>
-
-      <View style={styles.drawerItems}>
+      <View style={styles.menuItems}>
         {menuItems.map((item) => (
-          <DrawerItem
+          <Pressable
             key={item.name}
-            label={item.label}
-            iconName={item.icon}
-            isActive={currentRoute === item.name}
-            onPress={() => handleNavigation(item.route)}
-          />
+            style={[styles.menuItem, { backgroundColor: theme.background.tertiary }]}
+            onPress={() => {
+              props.navigation.closeDrawer();
+              router.replace(item.route);
+            }}
+          >
+            <Ionicons
+              name={item.icon as any}
+              size={22}
+              color={theme.text.secondary}
+            />
+            <Text style={[styles.menuLabel, { color: theme.text.secondary }]}>
+              {item.label}
+            </Text>
+          </Pressable>
         ))}
       </View>
-
-      <View style={[styles.drawerFooter, { borderTopColor: theme.border.default }]}>
-        <Text style={[styles.versionText, { color: theme.text.muted }]}>Versión 1.0.0</Text>
-      </View>
-    </DrawerContentScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   drawerContent: {
     flex: 1,
+    paddingHorizontal: 16,
   },
-  drawerHeader: {
-    padding: 20,
-    paddingTop: 50,
-    marginBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+  header: {
+    alignItems: "center",
+    marginBottom: 30,
   },
-  logoContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  appName: {
+  appTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
   },
-  drawerItems: {
-    flex: 1,
-    paddingHorizontal: 8,
+  menuItems: {
+    gap: 4,
   },
-  drawerItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 8,
-    marginBottom: 4,
-    borderLeftWidth: 3,
+    gap: 16,
   },
-  drawerItemLabel: {
+  menuLabel: {
     fontSize: 16,
-    marginLeft: 16,
-  },
-  drawerFooter: {
-    padding: 20,
-    borderTopWidth: 1,
-    alignItems: 'center',
-  },
-  versionText: {
-    fontSize: 12,
   },
 });
