@@ -1,7 +1,14 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { ThemedView } from '../components/themed-view';
+import { ThemedView } from './themed-view';
 import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+});
 
 const meta: Meta<typeof ThemedView> = {
   title: 'Components/ThemedView',
@@ -18,18 +25,3 @@ export const Default: Story = {
     children: null,
   },
 };
-
-export const Tinted: Story = {
-  args: {
-    style: styles.container,
-    tint: 'tint',
-    children: null,
-  },
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-});

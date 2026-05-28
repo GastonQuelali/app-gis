@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { Collapsible } from '../components/ui/collapsible';
+import { Collapsible } from './collapsible';
 import { ThemedText } from '../themed-text';
 
 const meta: Meta<typeof Collapsible> = {
