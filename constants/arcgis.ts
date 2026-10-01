@@ -51,6 +51,14 @@ export const getBaseMapUrl = (year: keyof typeof ARCGIS_CONFIG.BASE_MAPS): strin
   return `${ARCGIS_BASE_URL}/${ARCGIS_CONFIG.BASE_MAPS[year]}`;
 };
 
+export const EXTERNAL_BASE_MAPS = {
+  SATELLITE: {
+    title: "Satélite",
+    url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+    copyright: "Powered by Esri",
+  },
+} as const;
+
 export const getPrediosCountUrl = (): string => {
   return `${ARCGIS_BASE_URL}/${ARCGIS_CONFIG.LAYERS.PREDIOS}/query?where=1=1&returnCountOnly=true&f=json`;
 };

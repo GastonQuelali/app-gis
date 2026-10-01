@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
-import { ARCGIS_CONFIG, getBaseMapUrl, getLayerUrl } from "../constants/arcgis";
-import { generateArcGISHTML } from "../constants/templates/arcgis-map";
+import { ARCGIS_CONFIG, EXTERNAL_BASE_MAPS, getBaseMapUrl, getLayerUrl } from "../constants/arcgis";
+import { BaseMapConfig, generateArcGISHTML } from "../constants/templates/arcgis-map";
 
 interface ArcGISMapProps {
   latitude: number;
@@ -41,10 +41,13 @@ const ArcGISMap: React.FC<ArcGISMapProps> = ({
 
   const baseMapsOrder = [2023, 2022, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008, 2007, 2004, 2000, 1994, 1964];
 
-  const baseMapsConfig = baseMapsOrder.map(year => ({
-    year,
-    url: getBaseMapUrl(year as keyof typeof ARCGIS_CONFIG.BASE_MAPS)
-  }));
+  const baseMapsConfig: BaseMapConfig[] = [
+    { url: EXTERNAL_BASE_MAPS.SATELLITE.url, title: EXTERNAL_BASE_MAPS.SATELLITE.title, id: "baseMapSatellite", copyright: EXTERNAL_BASE_MAPS.SATELLITE.copyright },
+    ...baseMapsOrder.map(year => ({
+      year,
+      url: getBaseMapUrl(year as keyof typeof ARCGIS_CONFIG.BASE_MAPS)
+    }))
+  ];
 
   const arcgisHTML = useMemo(() => {
     return generateArcGISHTML({

@@ -4,9 +4,12 @@ interface LayerConfig {
   url: string;
 }
 
-interface BaseMapConfig {
-  year: number;
+export interface BaseMapConfig {
+  year?: number;
   url: string;
+  title?: string;
+  id?: string;
+  copyright?: string;
 }
 
 export interface ArcGISMapTemplateParams {
@@ -90,11 +93,11 @@ export function generateArcGISHTML(params: ArcGISMapTemplateParams): string {
           window.updateLayers(${JSON.stringify(visibleLayers.length > 0 ? visibleLayers : ['LIMITES'])});
         });
 
-        function crearBasemap(url, titulo, id) {
+        function crearBasemap(url, titulo, id, copyright) {
           const tileLayer = new TileLayer({
             url: url,
             title: titulo,
-            copyright: "GRS 80 - MARGEN SIRGAS(WGS 84)"
+            copyright: copyright || "GRS 80 - MARGEN SIRGAS(WGS 84)"
           });
           return new Basemap({
             baseLayers: [tileLayer],
@@ -106,9 +109,10 @@ export function generateArcGISHTML(params: ArcGISMapTemplateParams): string {
 
         const baseMaps = ${JSON.stringify(baseMaps.map(bm => ({
           url: bm.url,
-          title: bm.year.toString(),
-          id: `baseMap${bm.year}`
-        })))}.map(bm => crearBasemap(bm.url, bm.title, bm.id));
+          title: bm.title ?? String(bm.year),
+          id: bm.id ?? `baseMap${bm.year}`,
+          copyright: bm.copyright ?? null
+        })))}.map(bm => crearBasemap(bm.url, bm.title, bm.id, bm.copyright));
 
         const basemapGallery = new BasemapGallery({
           view: view,
