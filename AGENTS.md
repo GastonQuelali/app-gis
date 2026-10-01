@@ -31,9 +31,11 @@ components/ui/collapsible.tsx(7,10): TS2305: Module '"@/constants/theme"' has no
 hooks/use-theme-color.ts(6,10):     TS2305: (same)
 ```
 
-They are fixed in PR #2 (branch `feature/DAGC-012-add-storybook`), not in `master`. **Do not assume you introduced them** — verify with `git stash` if unsure. Lint passes despite them.
+`constants/theme.ts` never exported `Colors`, though both files import it. `master` does not typecheck. **Do not assume you introduced them** — verify with `git stash` if unsure.
 
-These TS errors do **not** block runtime: Babel strips types without checking, so the app runs fine.
+Fixed on `feature/GAM-014-version-santa-cruz` by adding the `Colors` export, and independently in PR #2 (`feature/DAGC-012-add-storybook`). The two fixes are identical, so expect at most a trivial conflict when both land.
+
+These TS errors do **not** block runtime: Babel strips types without checking, so the app runs fine even when `tsc` fails.
 
 ## This repo is a per-municipality fork
 
@@ -45,14 +47,10 @@ ArcGIS Server: `192.168.105.219:6080`, plain HTTP, no auth. Data lives in folder
 
 **Layers and map center must agree.** `MAP_CONFIG.INITIAL_REGION` sits at Cochabamba (`constants/arcgis.ts`). The CBA layers only cover Cochabamba (~-66.1, -17.4). Centering the map anywhere else yields a *blank map with no error* — tiles resolve, there is just nothing to draw. This is the failure mode when porting to another municipality: point `SERVER_HOST` at the new server *and* set the center to that city's coverage.
 
-## Dead code — do not wire up without fixing
+## Dead code — do not wire up without checking
 
-- `services/api.ts` is imported nowhere. It also has a latent bug: `getManzanaUrl` is aliased to `getPrediosCountUrl`, so `getManzanaCount()` would return predios counts. `constants/arcgis.ts` defines a correct `getManzanaUrl`.
+- `services/api.ts` is imported nowhere. Its `getManzanaUrl` / `getPrediosCountUrl` aliases are now correct, but nothing calls it.
 - `constants/auth.ts` (`AUTH_CONFIG`) is imported nowhere. Login is biometric-only and stores the email locally in SecureStore — **it never calls a server**. Any email/password gets in. The `/api/auth/*` endpoints 404 on the server.
-
-## Known lint warning (pre-existing, leave it)
-
-`components/ArcGISMap.tsx` `useMemo` omits `capasConfig`/`baseMapsConfig` from its dep array. Real stale-closure risk, but not introduced by you.
 
 ## Conventions
 
