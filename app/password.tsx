@@ -41,7 +41,7 @@ export default function LoginPasswordScreen() {
         { text: "OK", onPress: () => router.replace("/(tabs)") }
       ]);
       
-    } catch (_error) {
+    } catch {
       Alert.alert("Error", "No se pudo completar el inicio de sesión");
     } finally {
       setLoading(false);

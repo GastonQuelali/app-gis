@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
-import { getPrediosCountUrl as getPrediosUrl, getPrediosCountUrl as getManzanaUrl } from "../constants/arcgis";
+import { getPrediosCountUrl as getPrediosUrl, getManzanaUrl } from "../constants/arcgis";
 
 interface ApiResponse<T> {
   data?: T;

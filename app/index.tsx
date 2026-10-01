@@ -49,7 +49,7 @@ export default function LoginScreen() {
       } else {
         Alert.alert("Error", "Autenticación fallida");
       }
-    } catch (_error) {
+    } catch {
       Alert.alert("Error", "No se pudo completar la autenticación");
     } finally {
       setIsAuthenticating(false);
