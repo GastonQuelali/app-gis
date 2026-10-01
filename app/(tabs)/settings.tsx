@@ -109,7 +109,7 @@ export default function SettingsScreen() {
 
       <View style={styles.footer}>
         <Text style={[styles.footerText, { color: theme.text.muted, fontFamily: "Poppins" }]}>Versión 1.0.0</Text>
-        <Text style={[styles.footerText, { color: theme.text.muted, fontFamily: "Poppins" }]}>Sistema de Catastro - Cochabamba</Text>
+        <Text style={[styles.footerText, { color: theme.text.muted, fontFamily: "Poppins" }]}>Sistema de Catastro - Santa Cruz</Text>
       </View>
     </ScrollView>
   );

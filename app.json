@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "app-gis",
-    "slug": "app-gis",
+    "name": "GAM Santa Cruz",
+    "slug": "app-gis-scz",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "appgis",
+    "scheme": "appgisscz",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -13,7 +13,7 @@
       "NSAppTransportSecurity": {
         "NSAllowsArbitraryLoads": true
       },
-      "bundleIdentifier": "com.anonymous.appgis"
+      "bundleIdentifier": "com.gamscz.appgis"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.appgis"
+      "package": "com.gamscz.appgis"
     },
     "web": {
       "output": "static",

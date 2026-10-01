@@ -49,7 +49,7 @@ useEffect(() => {
           Sistema de Catastro
         </Text>
         <Text style={[styles.subtitle, { fontFamily: "Poppins" }]}>
-          Cochabamba - Bolivia
+          Santa Cruz - Bolivia
         </Text>
       </View>
 
@@ -107,7 +107,7 @@ useEffect(() => {
             { color: theme.text.secondary, fontFamily: "Poppins" },
           ]}
         >
-          Explora el mapa de Cochabamba con imágenes satelitales históricas
+          Explora el mapa de Santa Cruz con imágenes satelitales históricas
           desde 1964 hasta 2023.
         </Text>
       </View>

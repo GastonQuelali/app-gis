@@ -52,11 +52,11 @@ export const getBaseMapUrl = (year: keyof typeof ARCGIS_CONFIG.BASE_MAPS): strin
 };
 
 export const getPrediosCountUrl = (): string => {
-  return `${ARCGIS_BASE_URL}/catastro/predios_cba/FeatureServer/0/query?where=1=1&returnCountOnly=true&f=json`;
+  return `${ARCGIS_BASE_URL}/${ARCGIS_CONFIG.LAYERS.PREDIOS}/query?where=1=1&returnCountOnly=true&f=json`;
 };
 
 export const getManzanaCountUrl = (): string => {
-  return `${ARCGIS_BASE_URL}/catastro/manzana/MapServer/0/query?where=1=1&returnCountOnly=true&f=json`;
+  return `${ARCGIS_BASE_URL}/${ARCGIS_CONFIG.LAYERS.MANZANAS}/0/query?where=1=1&returnCountOnly=true&f=json`;
 };
 
 export const getManzanaUrl = getManzanaCountUrl;

@@ -80,7 +80,7 @@ export default function LoginScreen() {
           Sistema de Catastro
         </Text>
         <Text style={[styles.subtitle, { color: theme.text.secondary, fontFamily: "Poppins" }]}>
-          Cochabamba - Bolivia
+          Santa Cruz - Bolivia
         </Text>
 
         <View style={styles.inputContainer}>
